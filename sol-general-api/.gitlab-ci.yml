@@ -1,0 +1,12 @@
+stages:
+- backend
+backend_deploy:
+  stage: backend
+  script:
+    - echo "Deploying backend..."
+    - POSTGRES_DB="$POSTGRES_DB"
+    - POSTGRES_USER="$POSTGRES_USER"
+    - POSTGRES_PASSWORD="$POSTGRES_PASSWORD"
+    - DOMAIN_NAME="$DOMAIN_NAME"
+    - DJANGO_SECRET_KEY="$DJANGO_SECRET_KEY"
+    - docker compose up --build -d

@@ -1,0 +1,285 @@
+openapi: 3.0.3
+info:
+  title: ITPM admin panel API
+  version: 1.0.0
+  description: Admin panel for Telegram chat bot, which will help to improve user
+    interactions with the chats.
+paths:
+  /api/schema/:
+    get:
+      operationId: schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - schema
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/worlds/:
+    get:
+      operationId: worlds_list
+      description: Worlds viewset.
+      tags:
+      - worlds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/World'
+          description: ''
+  /api/worlds/{id}/:
+    get:
+      operationId: worlds_retrieve
+      description: Worlds viewset.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this world.
+        required: true
+      tags:
+      - worlds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/World'
+          description: ''
+components:
+  schemas:
+    Enemy:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        question:
+          type: string
+        answer:
+          type: string
+        enemy_type:
+          $ref: '#/components/schemas/EnemyTypeEnum'
+      required:
+      - answer
+      - enemy_type
+      - id
+      - question
+    EnemyTypeEnum:
+      enum:
+      - CIRCLE
+      type: string
+      description: '* `CIRCLE` - Circle'
+    Level:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        waves:
+          type: array
+          items:
+            $ref: '#/components/schemas/Wave'
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        world:
+          type: integer
+      required:
+      - description
+      - id
+      - title
+      - waves
+      - world
+    Wave:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        enemies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Enemy'
+        delay_time:
+          type: integer
+          maximum: 86400000
+          minimum: 1000
+        level:
+          type: integer
+      required:
+      - delay_time
+      - enemies
+      - id
+      - level
+    World:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        levels:
+          type: array
+          items:
+            $ref: '#/components/schemas/Level'
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+      required:
+      - description
+      - id
+      - levels
+      - name
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

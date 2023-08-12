@@ -1,0 +1,49 @@
+repos:
+# Fixes the spaces
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v4.4.0
+      hooks:
+          - id: end-of-file-fixer
+          - id: trailing-whitespace
+          - id: detect-private-key
+          - id: requirements-txt-fixer
+          - id: check-docstring-first
+# Black
+    - repo: https://github.com/ambv/black
+      rev: 23.3.0
+      hooks:
+      - id: black
+        language_version: python3.10
+# Flake8
+    - repo: https://github.com/pycqa/flake8
+      rev: 6.0.0
+      hooks:
+      - id: flake8
+# Pytest
+    - repo: local
+      hooks:
+        - id: tests
+          name:  tests
+          stages: [push]
+          entry: pytest
+          language: system
+          always_run: true
+          pass_filenames: false
+# Migrations
+    - repo: local
+      hooks:
+        - id: pre-commit-django-migrations
+          name: Check django migrations
+          entry: ./admin_panel/manage.py makemigrations --check
+          language: system
+          types: [python]
+          pass_filenames: false
+# OpenAPI Schema
+    - repo: local
+      hooks:
+        - id: pre-commit-schema-generation
+          name: Generate a new OpenAPI scheme
+          entry: ./admin_panel/manage.py spectacular --file ./admin_panel/openapi.yaml --validate --fail-on-warn
+          language: system
+          types: [python]
+          pass_filenames: false
