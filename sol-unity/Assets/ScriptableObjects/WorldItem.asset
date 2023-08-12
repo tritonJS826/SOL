@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3a404fa5dc444e8795b84d43db562cc, type: 3}
+  m_Name: WorldItem
+  m_EditorClassIdentifier: 
+  id: 8923
+  name: WorldBuild
+  description: In this world you going to die
+  levelItems:
+  - id: 43432
+    title: Drinking class
+    description: Here you can learn how to drink chacha
+    waveItems:
+    - id: 01
+      time: 2000
+      enemies:
+      - id: 01
+        question: How much chacha you can drink to get lost
+        answer: 6
+        type: 0
+      - id: 02
+        question: How much chacha cost at Warshawa
+        answer: 5
+        type: 0
+    - id: 438493
+      time: 6000
+      enemies:
+      - id: 01
+        question: Should I mix chacha with bear?
+        answer: no
+        type: 2
+      - id: 02
+        question: Do you like chacha
+        answer: yes
+        type: 1
