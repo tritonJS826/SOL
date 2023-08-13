@@ -1,33 +1,44 @@
 version: "3.9"
 
 services:
+  sol-storage:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - ./sol-storage:/data
+    command: server /data --console-address ":9001"
+    environment: 
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+ 
   # responsible for reading data
   sol-static-query:
     build: ./sol-static-server/nginx
     restart: unless-stopped
     ports:
-    - "6000:80"
+      - "6000:80"
     volumes:
       - ./sol-static-files:/var/static-files
-
-
-  # responsible for data modifications 
-  # sol-static-command:
-  # sol-general-api:
-  #   build: .
-  #   restart: unless-stopped
-  #   command: bash -c "chmod +x /code/docker-entry-point.sh && /code/docker-entry-point.sh"
-  #   ports:
-  #     - "8080:8080"
-  #   environment: &backend_environment_variables
-  #     - DJANGO_ENV=production
-  #     - DJANGO_DATABASE_HOST=sol-general-postgres
-  #     - DJANGO_DATABASE_PORT=5432
-  #     - POSTGRES_DB=${POSTGRES_DB}
-  #     - POSTGRES_USER=${POSTGRES_USER}
-  #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-  #     - DOMAIN_NAME=${DOMAIN_NAME}
-  #     - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+  # main djang module
+  sol-general-api:
+    build: ./sol-general-api
+    restart: unless-stopped
+    command: bash -c "chmod +x /code/docker-entry-point.sh && /code/docker-entry-point.sh"
+    ports:
+      - "8080:8080"
+    environment: &backend_environment_variables
+      # - DJANGO_ENV=production
+      - DJANGO_ENV=development
+      - DJANGO_DATABASE_HOST=sol-general-postgres
+      - DJANGO_DATABASE_PORT=5432
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - DOMAIN_NAME=${DOMAIN_NAME}
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+  
   # reverse proxy for sol-general-api
   # sol-general-nginx-proxy:
   #   build: .sol-general-api/nginx
@@ -41,6 +52,7 @@ services:
   #       mode: host
   #   volumes:
   #     - /etc/letsencrypt/:/etc/letsencrypt/
+ 
   # database 
   sol-general-postgres:
     restart: always

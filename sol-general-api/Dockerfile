@@ -6,4 +6,6 @@ ENV PYTHONUNBUFFERED=1
 COPY sol /code/
 WORKDIR /code
 COPY requirements.txt /code/
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements-dev.txt /code/
+RUN pip install --no-cache-dir -r requirements-dev.txt
+RUN pip install --no-cache-dir -r requirements.txt 
