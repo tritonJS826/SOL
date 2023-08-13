@@ -1,10 +1,21 @@
 version: "3.9"
 
 services:
+  # responsible for reading data
+  sol-static-query:
+    build: ./sol-static-server/nginx
+    restart: unless-stopped
+    ports:
+    - "6000:80"
+    volumes:
+      - ./sol-static-files:/var/static-files
+
+
+  # responsible for data modifications 
+  # sol-static-command:
   # sol-general-api:
   #   build: .
   #   restart: unless-stopped
-  #   container_name: sol-general-api
   #   command: bash -c "chmod +x /code/docker-entry-point.sh && /code/docker-entry-point.sh"
   #   ports:
   #     - "8080:8080"
@@ -17,10 +28,10 @@ services:
   #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
   #     - DOMAIN_NAME=${DOMAIN_NAME}
   #     - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
-  # sol-general-nginx:
-  #   build: ./nginx
+  # reverse proxy for sol-general-api
+  # sol-general-nginx-proxy:
+  #   build: .sol-general-api/nginx
   #   restart: unless-stopped
-  #   container_name: sol-general-nginx
   #   ports:
   #     - target: 80
   #       published: 80
@@ -30,6 +41,7 @@ services:
   #       mode: host
   #   volumes:
   #     - /etc/letsencrypt/:/etc/letsencrypt/
+  # database 
   sol-general-postgres:
     restart: always
     image: postgres:14.4-alpine
