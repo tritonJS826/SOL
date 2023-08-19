@@ -1,9 +1,15 @@
 from rest_framework.serializers import ModelSerializer
 
-from .models import World, Level, Wave, Enemy
+from .models import World, Level, Wave, Enemy, QuestionGroup
+
+class QuestionGroupSerializer(ModelSerializer):
+    class Meta:
+        model = QuestionGroup
+        exclude = ("created", "updated")
 
 
 class EnemySerializer(ModelSerializer):
+    question_group = QuestionGroupSerializer()
     class Meta:
         model = Enemy 
         exclude = ("created", "updated", "waves")
@@ -31,4 +37,5 @@ class WorldSerializer(ModelSerializer):
     class Meta:
         model = World 
         exclude = ("created", "updated")
+
 

@@ -167,16 +167,17 @@ paths:
                 items:
                   $ref: '#/components/schemas/World'
           description: ''
-  /api/worlds/{id}/:
+  /api/worlds/{uuid}/:
     get:
       operationId: worlds_retrieve
       description: Worlds viewset.
       parameters:
       - in: path
-        name: id
+        name: uuid
         schema:
-          type: integer
-        description: A unique integer value identifying this world.
+          type: string
+          format: uuid
+        description: A UUID string identifying this world.
         required: true
       tags:
       - worlds
@@ -195,20 +196,21 @@ components:
     Enemy:
       type: object
       properties:
-        id:
-          type: integer
+        uuid:
+          type: string
+          format: uuid
           readOnly: true
-        question:
-          type: string
-        answer:
-          type: string
+        question_group:
+          $ref: '#/components/schemas/QuestionGroup'
         enemy_type:
           $ref: '#/components/schemas/EnemyTypeEnum'
+        user:
+          type: integer
       required:
-      - answer
       - enemy_type
-      - id
-      - question
+      - question_group
+      - user
+      - uuid
     EnemyTypeEnum:
       enum:
       - CIRCLE
@@ -217,8 +219,9 @@ components:
     Level:
       type: object
       properties:
-        id:
-          type: integer
+        uuid:
+          type: string
+          format: uuid
           readOnly: true
         waves:
           type: array
@@ -229,19 +232,45 @@ components:
           maxLength: 255
         description:
           type: string
+        wave_order_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
         world:
-          type: integer
+          type: string
+          format: uuid
       required:
       - description
-      - id
       - title
+      - uuid
+      - wave_order_ids
       - waves
       - world
+    QuestionGroup:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        question:
+          type: string
+        answer:
+          type: string
+        user:
+          type: integer
+      required:
+      - answer
+      - question
+      - user
+      - uuid
     Wave:
       type: object
       properties:
-        id:
-          type: integer
+        uuid:
+          type: string
+          format: uuid
           readOnly: true
         enemies:
           type: array
@@ -251,18 +280,26 @@ components:
           type: integer
           maximum: 86400000
           minimum: 1000
+        enemy_order_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
         level:
-          type: integer
+          type: string
+          format: uuid
       required:
       - delay_time
       - enemies
-      - id
+      - enemy_order_ids
       - level
+      - uuid
     World:
       type: object
       properties:
-        id:
-          type: integer
+        uuid:
+          type: string
+          format: uuid
           readOnly: true
         levels:
           type: array
@@ -273,11 +310,20 @@ components:
           maxLength: 255
         description:
           type: string
+        level_order_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        user:
+          type: integer
       required:
       - description
-      - id
+      - level_order_ids
       - levels
       - name
+      - user
+      - uuid
   securitySchemes:
     jwtAuth:
       type: http
